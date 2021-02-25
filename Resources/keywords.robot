@@ -62,14 +62,14 @@ Verify not able to continue
 
 Verify startdate max 1 month ahead
     ${todays_date}              Get Current Date    result_format=%Y-%m-%d
-    #${max_date}                Add Time to Date    ${todays_date}  30 days     result_format=%Y-%m+1-%d
+    #${max_date}                Add Time to Date    ${todays_date}  30 days     result_format=%Y-%m-%d
     ${datetime}                 Convert date    ${todays_date}      datetime
     Should be equal as integers     ${datetime.month}   2
-    ${max_date}                 ${datetime.month(+1)}
-    Should be equal as integers     ${max_date}   3
+    ${add_1month}                Evaluate     $datetime.month+1
+    Should be equal as integers     ${add_1month}   3
+    ${max_date}                 Get Current Date    result_format=%Y-%${add_1month}-%d
 
-
-    #Should be equal             "2021-03-25"    "${max_date}"
+    Should be equal             "2021-03-25"    "${max_date}"
 
 
 End Web Test
