@@ -37,37 +37,40 @@ Verify chosen startdate
     ${actual_start_date}        Get value      id=start
     Should be equal             "${chosen_start_date}"    "${actual_start_date}"
 
-Click Continue
-    Click element                id:continue
-
-Verify Right Page
-    Wait until page contains    "What would you like to drive?"
-    ${dates_correct}            Get text    //*[@id="showQuestion"]/label
-    Should be equal             "Selected trip dates: 2021-03-03 – 2021-03-05"  "${dates_correct}"
-
-
-
-
-Try choose earlier date
-    Click element               xpath://*[@id="start"]
-    Press keys                  xpath://*[@id="start"]      0222
-    Set Selenium Implicit Wait  5 seconds
-
-
-
-
-
-
 Choose enddate
     [Arguments]                 ${chosen_end_date}
     Click element               xpath://*[@id="end"]
-    Press keys                  xpath://*[@id="end"]      ${chosen_end_date}    RETURN
-    Set Selenium Implicit Wait  5 seconds
+    Press keys                  xpath://*[@id="end"]      ${chosen_end_date}
 
 Verify chosen enddate
     [Arguments]                 ${chosen_end_date}
     ${actual_end_date}          Get value      id=end
     Should be equal             "${chosen_end_date}"    "${actual_end_date}"
+
+Click Continue
+    Click button                id:continue
+
+Verify Right Page
+    [Arguments]                 ${correct_start_date}   ${correct_end_date}
+    Wait until page contains    What would you like to drive?
+    ${dates_correct}            Get text    //*[@id="showQuestion"]/label
+    Should be equal             "Selected trip dates: ${correct_start_date} – ${correct_end_date}"  "${dates_correct}"
+
+Verify not able to continue
+    ${actual_text}              Get text    id:questionText
+    Should not be equal         "${actual_text}"   "What would you like to drive?"
+
+Verify startdate max 1 month ahead
+    ${todays_date}              Get Current Date    result_format=%Y-%m-%d
+    #${max_date}                Add Time to Date    ${todays_date}  30 days     result_format=%Y-%m+1-%d
+    ${datetime}                 Convert date    ${todays_date}      datetime
+    Should be equal as integers     ${datetime.month}   2
+    ${max_date}                 ${datetime.month(+1)}
+    Should be equal as integers     ${max_date}   3
+
+
+    #Should be equal             "2021-03-25"    "${max_date}"
+
 
 End Web Test
     Close browser
