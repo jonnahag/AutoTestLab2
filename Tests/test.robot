@@ -3,26 +3,27 @@ Documentation               Lab 2 - Testar
 Resource                    ../Resources/keywords.robot
 Library                     SeleniumLibrary
 Library                     robot.libraries.DateTime
-Test Setup                  Begin Web Test
-Test Teardown               End Web Test
+Suite Setup                  Begin Web Test
+Suite Teardown               End Web Test
+Test Setup                  Get todays date
 
 *** Variables ***
 ${BROWSER}                  headlesschrome
 ${URL}                      http://rental12.infotiv.net/
+${TODAYS_DATE}
 
 *** Test Cases ***
-User can access website
-    [Documentation]                     Användaren kommer åt hemsidan
-    [Tags]                              Testar åtkomst
+User can choose rental dates
+    [Documentation]                     Användaren kan välja datum för att hyra bil
+    [Tags]                              Välja datum
     Go To Web Page
     Verify startdate is today's date
     Verify enddate is today's date
-    Choose startdate                    0303
-    Verify chosen startdate             2021-03-03
-    Choose enddate                      0305
-    Verify chosen enddate               2021-03-05
+    Choose startdate
+    Choose enddate
     Click Continue
-    Verify Right Page                   2021-03-03  2021-03-05
+
+*** IGNORE ***
 
 Earliest selectable date is today
     [Documentation]                     Användaren kan inte mata in startdatum som är tidigare än dagens datum
