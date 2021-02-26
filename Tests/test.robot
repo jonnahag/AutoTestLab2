@@ -5,55 +5,55 @@ Library                     SeleniumLibrary
 Library                     robot.libraries.DateTime
 Suite Setup                  Begin Web Test
 Suite Teardown               End Web Test
-Test Setup                  Get todays date
+#Test Setup                  Get todays date
 
 *** Variables ***
-${BROWSER}                  headlesschrome
+${BROWSER}                  chrome
 ${URL}                      http://rental12.infotiv.net/
-${TODAYS_DATE}
+#${TODAYS_DATE}
 
 *** Test Cases ***
-User can choose rental dates
-    [Documentation]                     Användaren kan välja datum för att hyra bil
-    [Tags]                              Välja datum
+User can access website with correct current dates
+    [Documentation]                     Kollar att sidan har rätt startdatum (dagens datum)
+    [Tags]                              Startvärden
     Go To Web Page
     Verify startdate is today's date
     Verify enddate is today's date
+
+User can choose rental dates
+    [Documentation]                     Användaren kan välja datum för att hyra bil
+    [Tags]                              Välja datum     Startdatum      Slutdatum
+    Go To Web Page
     Choose startdate
     Choose enddate
     Click Continue
+    Verify Right Page
 
-*** IGNORE ***
-
-Earliest selectable date is today
+Earliest selectable startdate is today
     [Documentation]                     Användaren kan inte mata in startdatum som är tidigare än dagens datum
-    [Tags]                              Startdatum
+    [Tags]                              Startdatum      Ogiltig
     Go To Web Page
-    Verify startdate is today's date
-    Verify enddate is today's date
-    Choose startdate                    0222
-    Verify chosen startdate             2021-02-22
+    Choose too early startdate
     Click Continue
-    Verify not able to continue
 
-Earliest selectable date is the date selected as start date
+Earliest selectable enddate is the date selected as startdate
     [Documentation]                     Användaren kan inte mata in slutdatum som är tidigare än startdatum
-    [Tags]                              Slutdatum
+    [Tags]                              Slutdatum       Ogiltig
     Go To Web Page
-    Verify startdate is today's date
-    Verify enddate is today's date
-    Choose startdate                    0303
-    Verify chosen startdate             2021-03-03
-    Choose enddate                      0301
-    Verify chosen enddate               2021-03-01
+    Choose startdate
+    Choose too early enddate
     Click Continue
-    Verify not able to continue
 
-Latest selectable date is one month ahead from today
+Latest selectable startdate is one month ahead from today
     [Documentation]                     Användaren kan inte mata in slutdatum som är tidigare än startdatum
-    [Tags]                              Slutdatum
+    [Tags]                              Startdatum      Ogiltig
     Go To Web Page
-    Verify startdate is today's date
-    Choose startdate                    0326
-    Verify chosen startdate             2021-03-26
-    Verify startdate max 1 month ahead
+    Choose too late startdate
+    Click Continue
+
+Latest selectable enddate is one month ahead from startdate
+    [Documentation]                     Användaren kan inte mata in slutdatum som är tidigare än startdatum
+    [Tags]                              Slutdatum       Ogiltig
+    Go To Web Page
+    Choose too late enddate
+    Click Continue

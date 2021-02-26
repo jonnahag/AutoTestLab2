@@ -19,13 +19,10 @@ Load Page
 Verify Page Loaded
     Wait until page contains    Infotiv Car Rental
 
-G
-
 Verify startdate is today's date
-
-    #${todays_date}              Get Current Date    result_format=%Y-%m-%d
+    ${todays_date}              Get Current Date    result_format=%Y-%m-%d
     ${start_date}               Get value    id=start
-    Should Be Equal	            "${TODAYS_DATE}"     "${start_date}"
+    Should Be Equal	            "${todays_date}"     "${start_date}"
 
 Verify enddate is today's date
     ${todays_date}              Get Current Date    result_format=%Y-%m-%d
@@ -34,11 +31,11 @@ Verify enddate is today's date
 
 Choose startdate
     ${todays_date}              Get Current Date    result_format=%Y-%m-%d
-    ${chosen_start_date}        Add Time to Date    ${todays_date}  1 days     result_format=%Y-%m-%d
+    ${getYear}                  evaluate   time.strftime("%Y")
+    ${chosen_start_date}        Add Time to Date    ${todays_date}  5 days     result_format=%m-%d
     Click element               xpath://*[@id="start"]
     Press keys                  xpath://*[@id="start"]      ${chosen_start_date}
-    Set Selenium Implicit Wait  5 seconds
-    Verify chosen startdate     ${chosen_start_date}
+    Verify chosen startdate     ${getYear}-${chosen_start_date}
 
 Verify chosen startdate
     [Arguments]                 ${chosen_start_date}
@@ -47,10 +44,11 @@ Verify chosen startdate
 
 Choose enddate
     ${todays_date}              Get Current Date    result_format=%Y-%m-%d
-    ${chosen_end_date}          Add Time to Date    ${todays_date}  2 days     result_format=%Y-%m-%d
+    ${getYear}                  evaluate   time.strftime("%Y")
+    ${chosen_end_date}          Add Time to Date    ${todays_date}  6 days     result_format=%m-%d
     Click element               xpath://*[@id="end"]
     Press keys                  xpath://*[@id="end"]      ${chosen_end_date}
-    Verify chosen enddate       ${chosen_end_date}
+    Verify chosen enddate       ${getYear}-${chosen_end_date}
 
 Verify chosen enddate
     [Arguments]                 ${chosen_end_date}
@@ -59,7 +57,6 @@ Verify chosen enddate
 
 Click Continue
     Click button                id:continue
-    Verify Right Page
 
 Verify Right Page
     ${actual_text}              Get text    id:questionText
@@ -69,7 +66,51 @@ Verify not able to continue
     ${actual_text}              Get text    id:questionText
     Should not be equal         "${actual_text}"   "What would you like to drive?"
 
-Verify startdate max 1 month ahead
+Choose too early startdate
+    ${todays_date}              Get Current Date    result_format=%Y-%m-%d
+    ${getYear}                  evaluate   time.strftime("%Y")
+    ${chosen_start_date}        Subtract Time From Date    ${todays_date}  4 days     result_format=%m-%d
+    Click element               xpath://*[@id="start"]
+    Press keys                  xpath://*[@id="start"]      ${chosen_start_date}
+    Set Selenium Implicit Wait  5 seconds
+    Verify chosen startdate     ${getYear}-${chosen_start_date}
+    Verify not able to continue
+
+Choose too early enddate
+    ${todays_date}              Get Current Date    result_format=%Y-%m-%d
+    ${getYear}                  evaluate   time.strftime("%Y")
+    ${chosen_end_date}          Subtract Time From Date    ${todays_date}  5 days     result_format=%m-%d
+    Click element               xpath://*[@id="end"]
+    Press keys                  xpath://*[@id="end"]      ${chosen_end_date}
+    Verify chosen enddate       ${getYear}-${chosen_end_date}
+    Verify not able to continue
+
+Choose too late startdate
+    ${todays_date}              Get Current Date    result_format=%Y-%m-%d
+    ${getYear}                  evaluate   time.strftime("%Y")
+    ${chosen_start_date}        Add Time To Date    ${todays_date}  35 days     result_format=%m-%d
+    Click element               xpath://*[@id="start"]
+    Press keys                  xpath://*[@id="start"]      ${chosen_start_date}
+    Verify chosen startdate     ${getYear}-${chosen_start_date}
+    Verify not able to continue
+
+Choose too late enddate
+    ${todays_date}              Get Current Date    result_format=%Y-%m-%d
+    ${getYear}                  evaluate   time.strftime("%Y")
+    ${chosen_end_date}          Add Time To Date    ${todays_date}  35 days     result_format=%m-%d
+    Click element               xpath://*[@id="end"]
+    Press keys                  xpath://*[@id="end"]      ${chosen_end_date}
+    Verify chosen enddate       ${getYear}-${chosen_end_date}
+    Verify not able to continue
+
+End Web Test
+    Close browser
+
+
+
+
+# Ett försöka att göra det helautomatiskt som inte riktigt funkar.
+Verify startdate max 1 month ahead AUTOMATIC
     ${todays_date}                  Get Current Date    result_format=%Y-%m-%d
     ${datetime}                     Convert date    ${todays_date}      datetime
     Should be equal as integers     ${datetime.month}   2
@@ -81,6 +122,5 @@ Verify startdate max 1 month ahead
     Should be equal                 "2021-03-26"    "${max_date}"
     Should be equal                 "2021-03-27"    "${over_max_date}"
 
-End Web Test
-    Close browser
+
 
